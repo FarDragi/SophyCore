@@ -1,12 +1,14 @@
 use tonic::{Request, Response, Status};
 
-use self::core::{core_server::Core, AddXpRequest, LevelUpResponse};
+use self::pb::{core_server::Core, AddXpRequest, LevelUpResponse};
 
-pub mod core {
+use super::Service;
+
+pub mod pb {
     tonic::include_proto!("core");
 }
 
-pub struct Service {}
+pub use pb::core_server::CoreServer;
 
 #[tonic::async_trait]
 impl Core for Service {
