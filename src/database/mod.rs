@@ -1,9 +1,19 @@
+use sea_orm::DatabaseConnection;
+
 use crate::config::Config;
 
-pub struct Database {}
+pub struct Database {
+    pub connection: DatabaseConnection,
+}
 
 impl Database {
-    pub fn new(config: &Config) -> Self {
-        Database {}
+    pub async fn new(config: &Config) -> Self {
+        let connection = sea_orm::Database::connect(&config.database_url)
+            .await
+            .expect("Fail connect to database");
+
+        info!("Connected to database, {}", &config.database_url);
+
+        Database { connection }
     }
 }

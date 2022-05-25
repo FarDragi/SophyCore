@@ -13,7 +13,9 @@ pub struct Service {
 
 impl Service {
     pub async fn start(self) {
-        let addr = "0.0.0.0:50051".parse().unwrap();
+        let addr = format!("0.0.0.0:{}", self.config.port.unwrap_or(50051))
+            .parse()
+            .expect("Failed to parse address");
 
         info!("Listening on {}", addr);
 

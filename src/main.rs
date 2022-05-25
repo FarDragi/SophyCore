@@ -17,7 +17,7 @@ async fn main() {
     Logs::new();
 
     let config = Arc::new(Config::new());
-    let database = Database::new(&config);
+    let database = Database::new(&config).await;
 
     let service = Service { config, database };
 

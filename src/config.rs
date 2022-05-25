@@ -6,16 +6,8 @@ use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
 pub struct Config {
-    pub database: DatabaseConfig,
-}
-
-#[derive(Deserialize, Debug)]
-pub struct DatabaseConfig {
-    pub host: Option<String>,
+    pub database_url: String,
     pub port: Option<u16>,
-    pub user: Option<String>,
-    pub password: String,
-    pub database: Option<String>,
 }
 
 impl Config {

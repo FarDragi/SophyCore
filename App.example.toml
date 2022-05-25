@@ -1,0 +1,1 @@
+database_url = "postgres://<user>:<password>@localhost:5432/sophy"
