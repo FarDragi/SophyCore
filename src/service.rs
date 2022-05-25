@@ -2,7 +2,7 @@ use tonic::{Request, Response, Status};
 
 use self::core::{core_server::Core, AddXpRequest, LevelUpResponse};
 
-mod core {
+pub mod core {
     tonic::include_proto!("core");
 }
 
