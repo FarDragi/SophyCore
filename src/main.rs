@@ -1,5 +1,6 @@
 mod config;
 mod database;
+mod error;
 mod logs;
 mod services;
 
