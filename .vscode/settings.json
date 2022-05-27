@@ -1,9 +1,11 @@
 {
     "cSpell.words": [
         "chrono",
+        "codegen",
         "Iden",
         "proto",
         "protos",
+        "seaql",
         "tokio"
     ],
     "cSpell.language": "en,pt,pt-BR"

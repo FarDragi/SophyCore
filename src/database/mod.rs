@@ -1,3 +1,5 @@
+mod entities;
+
 use migration::{Migrator, MigratorTrait};
 use sea_orm::DatabaseConnection;
 
