@@ -1,6 +1,9 @@
 mod entities;
 mod functions;
 
+#[cfg(feature = "migrate")]
+use std::process::exit;
+
 use migration::{Migrator, MigratorTrait};
 use sea_orm::DatabaseConnection;
 
@@ -21,6 +24,12 @@ impl Database {
         info!("Start migrate database");
         Migrator::up(&connection, None).await.expect("Fail migrate");
         info!("Finish migrate database");
+
+        #[cfg(feature = "migrate")]
+        {
+            exit(0);
+            info!("Close application");
+        }
 
         Database { connection }
     }
