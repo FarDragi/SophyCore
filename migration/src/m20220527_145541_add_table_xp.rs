@@ -20,7 +20,12 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Xp::GuildId).big_integer().not_null())
                     .col(ColumnDef::new(Xp::UserId).big_integer().not_null())
                     .col(ColumnDef::new(Xp::Level).integer().not_null().default(0))
-                    .col(ColumnDef::new(Xp::Xp).big_integer().not_null().default(0))
+                    .col(
+                        ColumnDef::new(Xp::Progress)
+                            .big_integer()
+                            .not_null()
+                            .default(0),
+                    )
                     .col(ColumnDef::new(Xp::UpdatedAt).timestamp())
                     .primary_key(Index::create().col(Xp::UserId).col(Xp::GuildId))
                     .foreign_key(

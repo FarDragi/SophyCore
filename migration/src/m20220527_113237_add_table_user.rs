@@ -23,6 +23,14 @@ impl MigrationTrait for Migration {
                             .primary_key()
                             .not_null(),
                     )
+                    .col(ColumnDef::new(User::Level).integer().not_null().default(0))
+                    .col(
+                        ColumnDef::new(User::Progress)
+                            .big_integer()
+                            .not_null()
+                            .default(0),
+                    )
+                    .col(ColumnDef::new(User::XpUpdatedAt).timestamp())
                     .to_owned(),
             )
             .await

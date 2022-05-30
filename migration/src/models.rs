@@ -4,6 +4,9 @@ use sea_orm_migration::prelude::*;
 pub enum User {
     Table,
     Id,
+    Level,
+    Progress,
+    XpUpdatedAt,
 }
 
 #[derive(Iden)]
@@ -18,6 +21,6 @@ pub enum Xp {
     UserId,
     GuildId,
     Level,
-    Xp,
+    Progress,
     UpdatedAt,
 }
