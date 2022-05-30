@@ -10,7 +10,7 @@ pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub user_id: i64,
     pub level: i32,
-    pub xp: i64,
+    pub progress: i64,
     pub updated_at: Option<DateTimeUtc>,
 }
 
