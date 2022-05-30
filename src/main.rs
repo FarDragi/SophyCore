@@ -1,3 +1,4 @@
+mod cache;
 mod config;
 mod database;
 mod error;
@@ -6,6 +7,7 @@ mod services;
 
 use std::sync::Arc;
 
+use cache::Cache;
 use services::Service;
 
 use crate::{config::Config, database::Database, logs::Logs};
@@ -22,8 +24,13 @@ async fn main() {
 
     let config = Arc::new(Config::new());
     let database = Database::new(&config).await;
+    let cache = Cache::new(&config).await;
 
-    let service = Service { config, database };
+    let service = Service {
+        config,
+        database,
+        cache,
+    };
 
     service.start().await;
 }

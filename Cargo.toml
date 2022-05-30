@@ -20,6 +20,8 @@ log = "0.4.17"
 chrono = "0.4.19"
 migration = { path = "migration" }
 async-trait = "0.1.53"
+redis = { version = "0.21.5", features = ["tokio-comp"] }
+deadpool-redis = "0.10.2"
 
 [build-dependencies]
 tonic-build = "0.7.2"

@@ -4,11 +4,12 @@ use std::sync::Arc;
 
 use tonic::transport::Server;
 
-use crate::{config::Config, database::Database, services::xp::XpServer};
+use crate::{cache::Cache, config::Config, database::Database, services::xp::XpServer};
 
 pub struct Service {
     pub config: Arc<Config>,
     pub database: Database,
+    pub cache: Cache,
 }
 
 impl Service {
