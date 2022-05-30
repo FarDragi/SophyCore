@@ -1,10 +1,10 @@
-mod core;
+mod xp;
 
 use std::sync::Arc;
 
 use tonic::transport::Server;
 
-use crate::{config::Config, database::Database, services::core::CoreServer};
+use crate::{config::Config, database::Database, services::xp::XpServer};
 
 pub struct Service {
     pub config: Arc<Config>,
@@ -20,7 +20,7 @@ impl Service {
         info!("Listening on {}", addr);
 
         Server::builder()
-            .add_service(CoreServer::new(self))
+            .add_service(XpServer::new(self))
             .serve(addr)
             .await
             .expect("Fail start server");
