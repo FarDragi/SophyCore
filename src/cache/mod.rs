@@ -1,4 +1,4 @@
-pub mod user;
+pub mod xp;
 
 use std::fmt::Debug;
 
