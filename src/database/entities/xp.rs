@@ -6,9 +6,9 @@ use sea_orm::entity::prelude::*;
 #[sea_orm(table_name = "xp")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
-    pub guild_id: i64,
+    pub guild_id: String,
     #[sea_orm(primary_key, auto_increment = false)]
-    pub user_id: i64,
+    pub user_id: String,
     pub level: i32,
     pub progress: i64,
     pub updated_at: Option<DateTimeUtc>,

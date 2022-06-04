@@ -19,7 +19,7 @@ impl MigrationTrait for Migration {
                     .table(Guild::Table)
                     .col(
                         ColumnDef::new(Guild::Id)
-                            .big_integer()
+                            .string_len(19)
                             .primary_key()
                             .not_null(),
                     )

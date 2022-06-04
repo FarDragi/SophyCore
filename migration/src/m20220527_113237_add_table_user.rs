@@ -19,7 +19,7 @@ impl MigrationTrait for Migration {
                     .table(User::Table)
                     .col(
                         ColumnDef::new(User::Id)
-                            .big_integer()
+                            .string_len(19)
                             .primary_key()
                             .not_null(),
                     )

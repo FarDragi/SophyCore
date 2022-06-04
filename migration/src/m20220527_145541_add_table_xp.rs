@@ -17,8 +17,8 @@ impl MigrationTrait for Migration {
             .create_table(
                 Table::create()
                     .table(Xp::Table)
-                    .col(ColumnDef::new(Xp::GuildId).big_integer().not_null())
-                    .col(ColumnDef::new(Xp::UserId).big_integer().not_null())
+                    .col(ColumnDef::new(Xp::GuildId).string_len(19).not_null())
+                    .col(ColumnDef::new(Xp::UserId).string_len(19).not_null())
                     .col(ColumnDef::new(Xp::Level).integer().not_null().default(0))
                     .col(
                         ColumnDef::new(Xp::Progress)
