@@ -1,3 +1,5 @@
+pub mod user;
+
 use std::fmt::Debug;
 
 use deadpool_redis::{Config as PoolConfig, Connection, Pool, Runtime};
