@@ -9,15 +9,15 @@ use super::{guild::GuildRepository, user::UserRepository};
 
 #[async_trait]
 pub trait XpRepository {
-    async fn add_xp(&self, user_id: i64, guild: i64, level: i32, xp: i64) -> Result<(), AppError>;
+    async fn add_xp(&self, user_id: u64, guild: u64, level: i32, xp: i64) -> Result<(), AppError>;
 }
 
 #[async_trait]
 impl XpRepository for Database {
     async fn add_xp(
         &self,
-        user_id: i64,
-        guild_id: i64,
+        user_id: u64,
+        guild_id: u64,
         level: i32,
         progress: i64,
     ) -> Result<(), AppError> {
@@ -29,7 +29,7 @@ impl XpRepository for Database {
             self.create_guild(guild_id).await?;
         }
 
-        let xp = xp::Entity::find_by_id((user_id, guild_id))
+        let xp = xp::Entity::find_by_id((user_id.to_string(), guild_id.to_string()))
             .one(&self.connection)
             .await
             .map_app_err()?;
@@ -42,8 +42,8 @@ impl XpRepository for Database {
             xp.update(&self.connection).await.map_app_err()?;
         } else {
             let xp = xp::ActiveModel {
-                user_id: Set(user_id),
-                guild_id: Set(guild_id),
+                user_id: Set(user_id.to_string()),
+                guild_id: Set(guild_id.to_string()),
                 updated_at: Set(Some(chrono::Utc::now())),
                 ..Default::default()
             };

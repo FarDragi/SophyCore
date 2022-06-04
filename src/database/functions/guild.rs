@@ -7,14 +7,14 @@ use crate::{
 
 #[async_trait]
 pub trait GuildRepository {
-    async fn exist_guild(&self, id: i64) -> Result<bool, AppError>;
-    async fn create_guild(&self, id: i64) -> Result<(), AppError>;
+    async fn exist_guild(&self, id: u64) -> Result<bool, AppError>;
+    async fn create_guild(&self, id: u64) -> Result<(), AppError>;
 }
 
 #[async_trait]
 impl GuildRepository for Database {
-    async fn exist_guild(&self, id: i64) -> Result<bool, AppError> {
-        let guild_exist = guild::Entity::find_by_id(id)
+    async fn exist_guild(&self, id: u64) -> Result<bool, AppError> {
+        let guild_exist = guild::Entity::find_by_id(id.to_string())
             .count(&self.connection)
             .await
             .map_app_err()?;
@@ -22,9 +22,9 @@ impl GuildRepository for Database {
         Ok(guild_exist > 0)
     }
 
-    async fn create_guild(&self, id: i64) -> Result<(), AppError> {
+    async fn create_guild(&self, id: u64) -> Result<(), AppError> {
         let guild = guild::ActiveModel {
-            id: Set(id),
+            id: Set(id.to_string()),
             ..Default::default()
         };
 
