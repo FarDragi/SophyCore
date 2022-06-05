@@ -4,13 +4,7 @@ use crate::{error::ServiceError, models::xp::Xp};
 
 use self::pb::{xp_server::Xp as XpService, LevelUp, User};
 
-use super::Service;
-
-pub mod pb {
-    tonic::include_proto!("core");
-}
-
-pub use pb::xp_server::XpServer;
+use super::{pb, Service};
 
 #[tonic::async_trait]
 impl XpService for Service {

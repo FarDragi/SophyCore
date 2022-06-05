@@ -4,7 +4,11 @@ use std::sync::Arc;
 
 use tonic::transport::Server;
 
-use crate::{cache::Cache, config::Config, database::Database, services::xp::XpServer};
+use crate::{cache::Cache, config::Config, database::Database, services::pb::xp_server::XpServer};
+
+pub mod pb {
+    tonic::include_proto!("core");
+}
 
 pub struct Service {
     pub config: Arc<Config>,
