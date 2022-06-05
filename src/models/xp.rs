@@ -1,4 +1,4 @@
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Duration, Utc};
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -62,4 +62,57 @@ impl Xp {
             Ok(xp)
         }
     }
+
+    pub fn add(&mut self) -> (bool, bool) {
+        let now = Utc::now() + Duration::minutes(5);
+
+        if self.last_update >= now {
+            return (false, false);
+        }
+
+        self.progress += 1;
+
+        let progress_target = LEVELS[self.level as usize];
+
+        if self.progress >= progress_target {
+            self.level += 1;
+            self.progress = 0;
+
+            (true, false)
+        } else {
+            (true, true)
+        }
+    }
+}
+
+const LEVELS: [i64; 200] = get_levels();
+
+const fn calc_level(level: i64) -> i64 {
+    let progress_multiplier = ((level - 1) / 5 + 1) * 20;
+    let level_multiplier = ((level - 1) % 5) + 1;
+    let base = {
+        let mut result = 0;
+        let mut i = 0;
+        let i_target = ((level - 1) / 5) + 1;
+
+        while i < i_target {
+            result += 100 * i;
+            i += 1;
+        }
+        result
+    };
+
+    (progress_multiplier * level_multiplier) + base
+}
+
+const fn get_levels() -> [i64; 200] {
+    let mut levels = [0; 200];
+
+    let mut i = 0;
+    while i < 200 {
+        levels[i] = calc_level((i + 1) as i64);
+        i += 1;
+    }
+
+    levels
 }
