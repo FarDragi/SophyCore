@@ -13,15 +13,6 @@ pub enum AppError {
     Json(JsonError),
 }
 
-impl AppError {
-    pub fn to_service_error(self) -> Result<(), Status> {
-        match self {
-            AppError::Custom(message) => Err(Status::internal(message)),
-            err => Err(Status::internal(format!("{:?}", err))),
-        }
-    }
-}
-
 pub trait MapError<T> {
     fn map_app_err(self) -> Result<T, AppError>;
     fn custom_error(self, message: &'static str) -> Result<T, AppError>;

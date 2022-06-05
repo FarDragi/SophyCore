@@ -1,5 +1,5 @@
 mod entities;
-mod functions;
+pub mod functions;
 
 #[cfg(feature = "migrate")]
 use std::process::exit;
