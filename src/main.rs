@@ -3,6 +3,7 @@ mod config;
 mod database;
 mod error;
 mod logs;
+mod models;
 mod services;
 
 use std::sync::Arc;
