@@ -26,7 +26,6 @@ impl GuildRepository for Database {
     async fn create_guild(&self, id: u64) -> Result<guild::Model, AppError> {
         let guild = guild::ActiveModel {
             id: Set(id.to_string()),
-            ..Default::default()
         };
 
         guild.insert(&self.connection).await.map_app_err()

@@ -12,8 +12,8 @@ pub mod pb {
 
 pub struct Service {
     pub config: Arc<Config>,
-    pub database: Database,
-    pub cache: Cache,
+    pub database: Arc<Database>,
+    pub cache: Arc<Cache>,
 }
 
 impl Service {

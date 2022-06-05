@@ -20,7 +20,7 @@ pub trait MapError<T> {
 
 impl<T> MapError<T> for Result<T, DbError> {
     fn map_app_err(self) -> Result<T, AppError> {
-        self.map_err(|err| AppError::Database(err))
+        self.map_err(AppError::Database)
     }
 
     fn custom_error(self, message: &'static str) -> Result<T, AppError> {
