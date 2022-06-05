@@ -18,6 +18,10 @@ impl XpService for Service {
             .await
             .map_service_error()?;
 
+        let global_xp = Xp::from_user_id(self, request.user_id)
+            .await
+            .map_service_error()?;
+
         todo!()
     }
 }

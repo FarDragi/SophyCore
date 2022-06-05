@@ -2,7 +2,9 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    cache::xp::XpCacheCommands, database::functions::user::UserRepository, error::AppError,
+    cache::xp::XpCacheCommands,
+    database::functions::{user::UserRepository, xp::XpRepository},
+    error::AppError,
     services::Service,
 };
 
@@ -29,6 +31,33 @@ impl Xp {
             };
 
             service.cache.set_user_global_xp(user_id, &xp).await?;
+
+            Ok(xp)
+        }
+    }
+
+    pub async fn from_user_id_and_guild_id(
+        service: &Service,
+        user_id: u64,
+        guild_id: u64,
+    ) -> Result<Self, AppError> {
+        let xp = service.cache.get_user_guild_xp(user_id, guild_id).await?;
+
+        if let Some(xp) = xp {
+            Ok(xp)
+        } else {
+            let xp = service.database.get_or_create_xp(user_id, guild_id).await?;
+
+            let xp = Self {
+                level: xp.level,
+                progress: xp.progress,
+                last_update: xp.updated_at.unwrap_or_else(Utc::now),
+            };
+
+            service
+                .cache
+                .set_user_guild_xp(user_id, guild_id, &xp)
+                .await?;
 
             Ok(xp)
         }
