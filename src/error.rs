@@ -56,10 +56,14 @@ impl<T> ServiceError<T> for Result<T, AppError> {
     fn map_service_error(self) -> Result<T, Status> {
         match self {
             Ok(value) => Ok(value),
-            Err(err) => match err {
-                AppError::Custom(message) => Err(Status::internal(message)),
-                err => Err(Status::internal(format!("{:?}", err))),
-            },
+            Err(err) => {
+                error!("{:?}", err);
+
+                match err {
+                    AppError::Custom(message) => Err(Status::internal(message)),
+                    err => Err(Status::internal(format!("{:?}", err))),
+                }
+            }
         }
     }
 }

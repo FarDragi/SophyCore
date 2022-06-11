@@ -1,3 +1,4 @@
+use chrono::Utc;
 use sea_orm::{ActiveModelTrait, ActiveValue::Set, EntityTrait};
 
 use crate::{
@@ -19,6 +20,7 @@ impl XpRepository for Database {
         let xp = xp::ActiveModel {
             user_id: Set(user_id.to_string()),
             guild_id: Set(guild_id.to_string()),
+            updated_at: Set(Some(Utc::now())),
             ..Default::default()
         };
 

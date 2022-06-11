@@ -48,4 +48,10 @@ impl Cache {
 
         conn.get(key).await.map_app_err()
     }
+
+    pub async fn list(&self, key: &str) -> Result<Vec<String>, AppError> {
+        let mut conn = self.get_connection().await?;
+
+        conn.keys(key).await.map_app_err()
+    }
 }

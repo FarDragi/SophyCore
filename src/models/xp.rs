@@ -8,6 +8,11 @@ use crate::{
     services::Service,
 };
 
+pub struct XpUpdate {
+    pub add: bool,
+    pub up: bool,
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Xp {
     pub level: i32,
@@ -63,24 +68,41 @@ impl Xp {
         }
     }
 
-    pub fn add(&mut self) -> (bool, bool) {
-        let now = Utc::now() + Duration::minutes(5);
+    pub fn add(&mut self) -> XpUpdate {
+        let now = Utc::now();
 
-        if self.last_update >= now {
-            return (false, false);
+        if self.last_update + Duration::minutes(5) >= now {
+            info!("Last update: {}", self.last_update);
+            info!("Now: {}", now);
+
+            debug!("Not updating XP because it was updated less than 5 minutes ago");
+
+            return XpUpdate {
+                add: false,
+                up: false,
+            };
         }
 
         self.progress += 1;
+        self.last_update = now;
 
         let progress_target = LEVELS[self.level as usize];
+
+        debug!("Progress target: {}", progress_target);
 
         if self.progress >= progress_target {
             self.level += 1;
             self.progress = 0;
 
-            (true, false)
+            XpUpdate {
+                add: true,
+                up: true,
+            }
         } else {
-            (true, true)
+            XpUpdate {
+                add: true,
+                up: false,
+            }
         }
     }
 }

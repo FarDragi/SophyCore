@@ -19,11 +19,11 @@ impl XpService for Service {
 
         let mut guild_xp = Xp::from_user_id(self, user_id).await.map_service_error()?;
 
-        let (guild_add, guild_up) = guild_xp.add();
+        let guild_update = guild_xp.add();
 
         response.guild = Some(LevelInfo {
-            add: guild_add,
-            up: guild_up,
+            add: guild_update.add,
+            up: guild_update.up,
             level: guild_xp.level,
         });
 
@@ -36,11 +36,11 @@ impl XpService for Service {
             .await
             .map_service_error()?;
 
-        let (global_add, global_up) = global_xp.add();
+        let global_update = global_xp.add();
 
         response.global = Some(LevelInfo {
-            add: global_add,
-            up: global_up,
+            add: global_update.add,
+            up: global_update.up,
             level: global_xp.level,
         });
 

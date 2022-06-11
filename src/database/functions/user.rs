@@ -1,3 +1,4 @@
+use chrono::Utc;
 use sea_orm::{ActiveModelTrait, EntityTrait, PaginatorTrait, Set};
 
 use crate::{
@@ -26,6 +27,7 @@ impl UserRepository for Database {
     async fn create_user(&self, id: u64) -> Result<user::Model, AppError> {
         let user = user::ActiveModel {
             id: Set(id.to_string()),
+            xp_updated_at: Set(Some(Utc::now())),
             ..Default::default()
         };
 

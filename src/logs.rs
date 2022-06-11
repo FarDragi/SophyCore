@@ -27,6 +27,7 @@ impl Logs {
                 )
             })
             .filter_level(LevelFilter::Debug)
+            .filter_module("h2", LevelFilter::Info)
             .init();
     }
 }
