@@ -30,7 +30,7 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .default(0),
                     )
-                    .col(ColumnDef::new(User::XpUpdatedAt).timestamp())
+                    .col(ColumnDef::new(User::XpUpdatedAt).timestamp_with_time_zone())
                     .to_owned(),
             )
             .await
