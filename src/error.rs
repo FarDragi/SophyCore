@@ -1,3 +1,5 @@
+use std::num::ParseIntError;
+
 use deadpool_redis::PoolError;
 use redis::RedisError;
 use sea_orm::error::DbErr as DbError;
@@ -11,6 +13,12 @@ pub enum AppError {
     Pool(PoolError),
     Custom(&'static str),
     Json(JsonError),
+    Parse(AppParseError),
+}
+
+#[derive(Debug)]
+pub enum AppParseError {
+    Int(ParseIntError),
 }
 
 pub trait MapError<T> {
@@ -41,6 +49,16 @@ impl<T> MapError<T> for Result<T, RedisError> {
 impl<T> MapError<T> for Result<T, JsonError> {
     fn map_app_err(self) -> Result<T, AppError> {
         self.map_err(AppError::Json)
+    }
+
+    fn custom_error(self, message: &'static str) -> Result<T, AppError> {
+        self.map_err(|_| AppError::Custom(message))
+    }
+}
+
+impl<T> MapError<T> for Result<T, ParseIntError> {
+    fn map_app_err(self) -> Result<T, AppError> {
+        self.map_err(|err| AppError::Parse(AppParseError::Int(err)))
     }
 
     fn custom_error(self, message: &'static str) -> Result<T, AppError> {

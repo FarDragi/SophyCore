@@ -26,7 +26,7 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .default(0),
                     )
-                    .col(ColumnDef::new(Xp::UpdatedAt).timestamp())
+                    .col(ColumnDef::new(Xp::UpdatedAt).timestamp_with_time_zone())
                     .primary_key(Index::create().col(Xp::UserId).col(Xp::GuildId))
                     .foreign_key(
                         ForeignKey::create()

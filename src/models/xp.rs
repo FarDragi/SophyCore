@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     cache::xp::XpCacheCommands,
     database::functions::{user::UserRepository, xp::XpRepository},
-    error::AppError,
+    error::{AppError, MapError},
     services::Service,
 };
 
@@ -13,11 +13,13 @@ pub struct XpUpdate {
     pub up: bool,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Xp {
     pub level: i32,
     pub progress: i64,
     pub last_update: DateTime<Utc>,
+    pub user_id: u64,
+    pub guild_id: Option<u64>,
 }
 
 impl Xp {
@@ -33,6 +35,8 @@ impl Xp {
                 level: xp.level,
                 progress: xp.progress,
                 last_update: xp.xp_updated_at.unwrap_or_else(Utc::now),
+                guild_id: None,
+                user_id: xp.id.parse::<u64>().map_app_err()?,
             };
 
             service.cache.set_user_global_xp(user_id, &xp).await?;
@@ -57,6 +61,8 @@ impl Xp {
                 level: xp.level,
                 progress: xp.progress,
                 last_update: xp.updated_at.unwrap_or_else(Utc::now),
+                guild_id: Some(xp.guild_id.parse::<u64>().map_app_err()?),
+                user_id: xp.user_id.parse::<u64>().map_app_err()?,
             };
 
             service
@@ -68,41 +74,80 @@ impl Xp {
         }
     }
 
-    pub fn add(&mut self) -> XpUpdate {
-        let now = Utc::now();
+    fn in_cooldown(&self, now: DateTime<Utc>) -> Option<(Xp, XpUpdate)> {
+        debug!("Last update: {}", self.last_update);
+        debug!("Now: {}", now);
+        debug!("Target: {}", self.last_update + Duration::minutes(5));
 
         if self.last_update + Duration::minutes(5) >= now {
-            info!("Last update: {}", self.last_update);
-            info!("Now: {}", now);
-
             debug!("Not updating XP because it was updated less than 5 minutes ago");
 
-            return XpUpdate {
-                add: false,
-                up: false,
-            };
+            Some((
+                self.clone(),
+                XpUpdate {
+                    add: false,
+                    up: false,
+                },
+            ))
+        } else {
+            None
+        }
+    }
+
+    pub fn add(&self) -> (Self, XpUpdate) {
+        let now = Utc::now();
+
+        if let Some(data) = self.in_cooldown(now) {
+            return data;
         }
 
-        self.progress += 1;
-        self.last_update = now;
+        let new_progress = self.progress + 1;
 
         let progress_target = LEVELS[self.level as usize];
 
         debug!("Progress target: {}", progress_target);
+        debug!("New progress: {}", new_progress);
 
-        if self.progress >= progress_target {
-            self.level += 1;
-            self.progress = 0;
-
-            XpUpdate {
-                add: true,
-                up: true,
-            }
+        if new_progress >= progress_target {
+            (
+                Xp {
+                    last_update: now,
+                    level: self.level + 1,
+                    progress: 0,
+                    guild_id: self.guild_id,
+                    user_id: self.user_id,
+                },
+                XpUpdate {
+                    add: true,
+                    up: true,
+                },
+            )
         } else {
-            XpUpdate {
-                add: true,
-                up: false,
+            (
+                Xp {
+                    last_update: now,
+                    level: self.level,
+                    progress: new_progress,
+                    guild_id: self.guild_id,
+                    user_id: self.user_id,
+                },
+                XpUpdate {
+                    add: true,
+                    up: false,
+                },
+            )
+        }
+    }
+
+    pub async fn save(&self, service: &Service) -> Result<(), AppError> {
+        match self.guild_id {
+            Some(guild_id) => {
+                service
+                    .cache
+                    .set_user_guild_xp(self.user_id, guild_id, self)
+                    .await
             }
+            None => service.cache.set_user_global_xp(self.user_id, self).await,
         }
     }
 }
